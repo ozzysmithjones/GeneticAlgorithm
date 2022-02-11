@@ -68,7 +68,7 @@ void AIController::gameOver()
 
 		//work out who did it the best.
 		int minScore = std::numeric_limits<int>::max();
-		int maxScore = std::numeric_limits<int>::min();
+		int bestScore = std::numeric_limits<int>::min();
 		int secondBestScore = std::numeric_limits<int>::min();
 		Agent* bestAgent = &agents[0];
 		Agent* secondBestAgent = &agents[1];
@@ -80,11 +80,11 @@ void AIController::gameOver()
 				minScore = agent.score;
 			}
 
-			if (agent.score > maxScore)
+			if (agent.score > bestScore)
 			{
 				secondBestAgent = bestAgent;
-				secondBestScore = maxScore;
-				maxScore = agent.score;
+				secondBestScore = bestScore;
+				bestScore = agent.score;
 				bestAgent = &agent;
 			}
 			else if (agent.score > secondBestScore)
@@ -94,8 +94,10 @@ void AIController::gameOver()
 			}
 		}
 
-		const double bias = (double)(maxScore - minScore) / std::max((double)((maxScore - minScore) + (secondBestScore - minScore)), 0.001);
-		Splice(secondBestAgent, bestAgent, bias);
+		bestScore -= minScore;
+		secondBestScore -= minScore;
+		const double bias = (double)(secondBestScore) / std::max((double)(bestScore + secondBestScore), 0.001);
+		Splice(bestAgent, secondBestAgent, bias);
 
 		for (std::size_t i = 0; i < agents.size(); i++)
 		{
