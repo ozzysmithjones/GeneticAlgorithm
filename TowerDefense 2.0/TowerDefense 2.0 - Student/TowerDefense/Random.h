@@ -15,9 +15,9 @@ public:
 	 * Returns a random int, long, or unsigned within the range [inclusive, inclusive]
 	 */
 	template <typename T>
-	static T UniformInt(const T min = std::numeric_limits<T>::min(), const T max = std::numeric_limits<T>::max())
+	static T UniformInt(const T min, const T max)
 	{
-		static std::uniform_int_distribution<T> dist(min, max);
+		std::uniform_int_distribution<T> dist(min, max);
 		return dist(mersenneTwister);
 	}
 
@@ -25,9 +25,9 @@ public:
 	 * Returns a random float or double within the range [inclusive, exclusive)
 	 */
 	template <typename T>
-	static T UniformReal(const T min = std::numeric_limits<T>::min(), const T max = std::numeric_limits<T>::max())
+	static T UniformReal(const T min, const T max)
 	{
-		static std::uniform_real_distribution<T> dist(min, max);
+		std::uniform_real_distribution<T> dist(min, max);
 		return dist(mersenneTwister);
 	}
 

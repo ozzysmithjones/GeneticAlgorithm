@@ -34,7 +34,6 @@ private:
 	int width;
 
 	// Helper functions
-	bool gridSpaceAvailable(int gridX, int gridY);
 
 
 public:
@@ -50,8 +49,10 @@ public:
 	void renderRange(int mouseX, int mouseY, int range, sf::RenderWindow* window);
 	void renderShadow(int mouseX, int mouseY, int range, sf::RenderWindow* window);
 
+	bool gridSpaceAvailable(int gridX, int gridY);
 	bool towerIsPurchasable(TowerType type);
 	bool addTower(TowerType type, int gridX, int gridY);
+	bool inRangeOfPath(int x, int y, TowerType type) const;
 
 	int gridStatus[WIDTH][HEIGHT] = {0};
 

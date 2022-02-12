@@ -179,6 +179,23 @@ bool GameBoard::addTower(TowerType type, int gridX, int gridY)
 	return false;
 }
 
+
+bool GameBoard::inRangeOfPath(int x, int y, TowerType type) const
+{
+	const int range = gameState->getTowerProps(type)["range"];
+
+	float minDist = std::numeric_limits<float>::max();
+	for (const auto& p : path)
+	{
+		const float xm = (p.x - x) * (p.x - (float)x);
+		const float ym = (p.y - y) * (p.y - (float)y);
+		const float dist = (float)(powf(xm + ym, 0.5));
+		minDist = std::min(dist, minDist);
+	}
+
+	return minDist <= range;
+}
+
 // Determine if any action needs ton be taken by
 // cliking on the game board
 void GameBoard::process(sf::Event event, sf::Vector2i mousePos)

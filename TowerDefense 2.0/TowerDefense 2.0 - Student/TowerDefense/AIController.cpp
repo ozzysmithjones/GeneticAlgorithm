@@ -18,28 +18,12 @@ Agent::Agent(int score) : Agent()
 
 Agent::Agent()
 {
-	//scramble the indices of the positions. 
-	for (std::size_t towerIndex = 0; towerIndex < PositionsByTower.size(); towerIndex++)
+	for (auto& position : positionByInterval)
 	{
-		auto& positions = PositionsByTower[towerIndex];
-		auto& indicesOfPositions = IndexOfPositionsByTower[towerIndex];
-
-		for (std::size_t i = 0; i < positions.size(); i++)
-		{
-			positions[i] = i;
-			indicesOfPositions[i] = i;
-		}
-
-		for (std::size_t i = 0; i < positions.size(); i++)
-		{
-			const std::size_t other = Random::UniformInt(0u, positions.size() - 1);
-			indicesOfPositions[positions[other]] = i;
-			indicesOfPositions[positions[i]] = other;
-			std::swap(positions[other], positions[i]);
-		}
+		position.x = Random::UniformInt(0, WIDTH - 1);
+		position.y = Random::UniformInt(0, HEIGHT - 1);
 	}
 
-	//
 	for (auto& tower : towerByInterval)
 	{
 		tower = (TowerType)Random::UniformInt<int>(1, (int)TowerType::count - 1);
@@ -98,14 +82,18 @@ void AIController::gameOver()
 			{
 				const double bias = bestScore / ((double)agents[i]->score + bestScore);
 				Splice(agents[i], bestAgent, bias);
-				Mutate(agents[i], ((WIDTH * HEIGHT) / agents.size()), 1);
 			}
 			else
 			{
 				*agents[i] = *agents[i - agents.size() / 2];
 				agents[i]->score = 0;
-				Mutate(agents[i], ((WIDTH * HEIGHT) / agents.size()), 1);
 			}
+		}
+
+
+		for (std::size_t i = 1; i < agents.size(); i++)
+		{
+			Mutate(agents[i], (STRIP_LENGTH / (agents.size() + 1)) * i, 8);
 		}
 	}
 
@@ -120,20 +108,13 @@ void AIController::Mutate(Agent* agent, std::size_t numPositionChanges, std::siz
 {
 	for (std::size_t i = 0; i < numPositionChanges; i++)
 	{
-		for (std::size_t towerIndex = 0; towerIndex < (std::size_t)TowerType::count - 1; towerIndex++)
+		const int roll = Random::UniformInt<int>(0, (int)agent->positionByInterval.size() - 1);
+		do
 		{
-			//Random swap a position.
-
-			auto& positionsByPower = agent->PositionsByTower[towerIndex];
-			auto& indicesOfPositionsByTower = agent->IndexOfPositionsByTower[towerIndex];
-
-			const int rollOne = Random::UniformInt<int>(0, (int)positionsByPower.size() - 1);
-			const int rollTwo = Random::UniformInt<int>(0, (int)positionsByPower.size() - 1);
-
-			indicesOfPositionsByTower[positionsByPower[rollOne]] = rollTwo;
-			indicesOfPositionsByTower[positionsByPower[rollTwo]] = rollOne;
-			std::swap(positionsByPower[rollOne], positionsByPower[rollTwo]);
+			agent->positionByInterval[roll].x = Random::UniformInt(0, WIDTH - 1);
+			agent->positionByInterval[roll].y = Random::UniformInt(0, HEIGHT - 1);
 		}
+		while (!m_gameBoard->inRangeOfPath(agent->positionByInterval[roll].x, agent->positionByInterval[roll].y, agent->towerByInterval[roll]));
 	}
 
 	for (std::size_t i = 0; i < numTowerChanges; i++)
@@ -146,35 +127,27 @@ void AIController::Mutate(Agent* agent, std::size_t numPositionChanges, std::siz
 
 void AIController::Splice(Agent* primary, const Agent* secondary, double bias)
 {
-	for (std::size_t towerIndex = 0; towerIndex < (int)TowerType::count - 1; towerIndex++)
-	{
-		auto& primaryPositions = primary->PositionsByTower[towerIndex];
-		auto& primaryIndexOfPositions = primary->IndexOfPositionsByTower[towerIndex];
-		auto& secondaryPositions = secondary->PositionsByTower[towerIndex];
+	auto& primaryPositionByInterval = primary->positionByInterval;
+	auto& secondaryPositionByInterval = secondary->positionByInterval;
 
-		for (std::size_t i = 0; i < primaryPositions.size(); i++)
-		{
-			const double roll = Random::UniformReal(0.0, std::nextafter(1.0, std::numeric_limits<double>::max()));
-
-			if (roll <= bias)
-			{
-				const unsigned swapIndex = primaryIndexOfPositions[secondaryPositions[i]];
-				primaryIndexOfPositions[primaryPositions[i]] = swapIndex;
-				primaryIndexOfPositions[primaryPositions[swapIndex]] = i;
-				std::swap(primaryPositions[i], primaryPositions[swapIndex]);
-			}
-		}
-	}
-
-	auto& primaryTowerByinterval = primary->towerByInterval;
-	auto& secondaryTowerByInterval = secondary->towerByInterval;
-
-	for (std::size_t i = 0; i < primaryTowerByinterval.size(); i++)
+	for (std::size_t i = 0; i < (int)TowerType::count - 1; i++)
 	{
 		const double roll = Random::UniformReal(0.0, std::nextafter(1.0, std::numeric_limits<double>::max()));
 		if (roll <= bias)
 		{
-			primaryTowerByinterval[i] = secondaryTowerByInterval[i];
+			primaryPositionByInterval[i] = secondaryPositionByInterval[i];
+		}
+	}
+
+	auto& primaryTowerByInterval = primary->towerByInterval;
+	auto& secondaryTowerByInterval = secondary->towerByInterval;
+
+	for (std::size_t i = 0; i < primaryTowerByInterval.size(); i++)
+	{
+		const double roll = Random::UniformReal(0.0, std::nextafter(1.0, std::numeric_limits<double>::max()));
+		if (roll <= bias)
+		{
+			primaryTowerByInterval[i] = secondaryTowerByInterval[i];
 		}
 	}
 }
@@ -199,19 +172,20 @@ void AIController::update()
 	{
 		counter = 0;
 		const TowerType& type = currentAgent->towerByInterval[currentTowerInterval];
-		if (m_gameBoard->towerIsPurchasable(type))
+		const sf::Vector2i& position = currentAgent->positionByInterval[currentTowerInterval];
+		const bool spaceAvailable = m_gameBoard->gridSpaceAvailable(position.x, position.y);
+		const bool purchasable = m_gameBoard->towerIsPurchasable(type);
+
+		if (spaceAvailable && purchasable)
 		{
-			//enumerate through all of the positions  (organized by priority) until one is found to place the tower.
-			for (const auto& i : currentAgent->PositionsByTower[(int)type - 1])
-			{
-				if (m_gameBoard->addTower(type, i % WIDTH, i / WIDTH))
-				{
-					currentTowerInterval++;
-					if (currentTowerInterval >= currentAgent->towerByInterval.size())
-						currentTowerInterval = 0;
-					break;
-				}
-			}
+			m_gameBoard->addTower(type, position.x, position.y);
+		}
+
+		if (!spaceAvailable || purchasable)
+		{
+			currentTowerInterval++;
+			if (currentTowerInterval >= currentAgent->towerByInterval.size())
+				currentTowerInterval = 0;
 		}
 	}
 
