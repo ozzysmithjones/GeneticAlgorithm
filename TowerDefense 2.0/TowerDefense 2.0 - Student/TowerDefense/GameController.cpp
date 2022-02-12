@@ -53,6 +53,7 @@ GameBoard::GameBoard(GameState* _gameState, TowerController* _towerController,
 		scoreText.setFont(font);
 		healthText.setFont(font);
 		waveWord.setFont(font);
+		debugText.setFont(font);
 	}
 
 	_menuTexture = new sf::Texture;
@@ -97,6 +98,11 @@ GameBoard::GameBoard(GameState* _gameState, TowerController* _towerController,
 	scoreText.setPosition(1750, 70);
 	scoreText.setCharacterSize(58);
 
+	debugText.setPosition(220, 220);
+	debugText.setCharacterSize(28);
+	debugText.setFillColor(sf::Color::Red);
+	debugText.setString("Debug");
+
 	healthText.setPosition(1250, 60);
 	healthText.setCharacterSize(58);
 	waveWord.setPosition(625, 85);
@@ -128,7 +134,7 @@ GameBoard::~GameBoard()
 	delete _tamsCounter;
 	delete _livesCounter;
 	delete _wavesCounter;
-	delete _helpTexture;
+	//delete _helpTexture;
 }
 
 bool GameBoard::gridSpaceAvailable(int gridX, int gridY)
@@ -296,6 +302,8 @@ void GameBoard::renderLabels(sf::RenderWindow* window)
 	window->draw(scoreText);
 	window->draw(healthText);
 	window->draw(waveWord);
+
+	window->draw(debugText);
 }
 
 // Draw Range
@@ -488,6 +496,7 @@ int main()
 
 		if (gameState->dirtyBit)
 		{
+			gameBoard->debugText.setString(aIController.getDebugText());
 			gameBoard->scoreText.setString(std::to_string(gameState->getScore()));
 			gameBoard->waveText.setString(std::to_string(gameState->getCurrentWave()));
 			gameBoard->healthText.setString(std::to_string(gameState->getHealth()));

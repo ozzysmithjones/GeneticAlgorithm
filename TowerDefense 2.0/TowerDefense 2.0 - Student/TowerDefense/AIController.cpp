@@ -1,6 +1,7 @@
 #include "AIController.h"
 #include "Timer.h"
 #include "GameState.h"
+#include <sstream>
 #include <iostream>
 #include <Windows.h>
 
@@ -9,6 +10,11 @@
 
 using namespace std;
 
+
+Agent::Agent(int score) : Agent()
+{
+	this->score = score;
+}
 
 Agent::Agent()
 {
@@ -43,7 +49,12 @@ Agent::Agent()
 AIController::AIController()
 	: currentAgentIndex(0), currentTowerInterval(0)
 {
-	currentAgent = &agents[0];
+	for (auto& agent : agents)
+	{
+		agent = new Agent();
+	}
+
+	currentAgent = agents[0];
 
 	m_gameController = nullptr;
 	m_gameBoard = nullptr;
@@ -53,63 +64,56 @@ AIController::AIController()
 
 AIController::~AIController()
 {
+	for (const auto& agent : agents)
+	{
+		delete agent;
+	}
 }
 
 void AIController::gameOver()
 {
-	elapsedSeconds = 0;
-	currentAgent->score = m_gameState->getScore();
+	static int generation = 1;
 
+	elapsedSeconds = 0;
+	counter = 0;
+	currentTowerInterval = 0;
+	currentAgent->score = m_gameState->getScore();
 	currentAgentIndex++;
+
 	if (currentAgentIndex >= agents.size())
 	{
+		generation++;
 		//End of generation.
 		currentAgentIndex = 0;
 
 		//work out who did it the best.
-		int minScore = std::numeric_limits<int>::max();
-		int bestScore = std::numeric_limits<int>::min();
-		int secondBestScore = std::numeric_limits<int>::min();
-		Agent* bestAgent = &agents[0];
-		Agent* secondBestAgent = &agents[1];
 
-		for (auto& agent : agents)
+		std::sort(agents.begin(), agents.end(), [](const Agent* first, const Agent* second) -> bool { return first->score > second->score; });
+		const Agent* bestAgent = agents[0];
+		const double bestScore = bestAgent->score;
+
+		for (std::size_t i = 1; i < agents.size(); i++)
 		{
-			if (agent.score < minScore)
+			if (i < agents.size() / 2)
 			{
-				minScore = agent.score;
+				const double bias = bestScore / ((double)agents[i]->score + bestScore);
+				Splice(agents[i], bestAgent, bias);
+				Mutate(agents[i], ((WIDTH * HEIGHT) / agents.size()), 1);
 			}
-
-			if (agent.score > bestScore)
+			else
 			{
-				secondBestAgent = bestAgent;
-				secondBestScore = bestScore;
-				bestScore = agent.score;
-				bestAgent = &agent;
+				*agents[i] = *agents[i - agents.size() / 2];
+				agents[i]->score = 0;
+				Mutate(agents[i], ((WIDTH * HEIGHT) / agents.size()), 1);
 			}
-			else if (agent.score > secondBestScore)
-			{
-				secondBestScore = agent.score;
-				secondBestAgent = &agent;
-			}
-		}
-
-		bestScore -= minScore;
-		secondBestScore -= minScore;
-		const double bias = (double)(secondBestScore) / std::max((double)(bestScore + secondBestScore), 0.001);
-		Splice(bestAgent, secondBestAgent, bias);
-
-		for (std::size_t i = 0; i < agents.size(); i++)
-		{
-			if (&agents[i] == bestAgent)
-				continue;
-
-			agents[i] = *secondBestAgent;
-			Mutate(&agents[i], (i + 1) * ((WIDTH * HEIGHT) / 10), 1);
 		}
 	}
 
-	currentAgent = &agents[currentAgentIndex];
+	currentAgent = agents[currentAgentIndex];
+
+	std::stringstream stream;
+	stream << "Generation : " << generation << "\nCurrent AI Index : " << currentAgentIndex << "\nPrevious score : " << currentAgent->score;
+	debugText = stream.str();
 }
 
 void AIController::Mutate(Agent* agent, std::size_t numPositionChanges, std::size_t numTowerChanges)
@@ -181,8 +185,8 @@ void AIController::update()
 		return;
 
 	//Calculation of delta time for timing.
-	double seconds = floor(m_Timer->elapsedSeconds());
-	double deltaTime = seconds - elapsedSeconds;
+	const double seconds = floor(m_Timer->elapsedSeconds());
+	const double deltaTime = seconds - elapsedSeconds;
 	if (seconds > elapsedSeconds)
 	{
 		elapsedSeconds = seconds;
@@ -191,7 +195,7 @@ void AIController::update()
 
 	counter += deltaTime;
 
-	if (counter > 1.0)
+	if (counter > 0.2)
 	{
 		counter = 0;
 		const TowerType& type = currentAgent->towerByInterval[currentTowerInterval];

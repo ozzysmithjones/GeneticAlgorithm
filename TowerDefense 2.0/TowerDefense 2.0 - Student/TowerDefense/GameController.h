@@ -65,7 +65,7 @@ public:
 	sf::RectangleShape* _livesCounter;
 	sf::RectangleShape* _wavesCounter;
 	sf::RectangleShape helpScreen;
-	sf::Text tamText, waveText, waveWord, healthText, text, scoreText;
+	sf::Text tamText, waveText, waveWord, healthText, text, scoreText, debugText;
 	sf::Font font;
 	sf::Event event;
 };

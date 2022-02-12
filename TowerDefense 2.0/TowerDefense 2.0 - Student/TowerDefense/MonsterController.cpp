@@ -224,6 +224,7 @@ void MonsterController::update()
 				pixelSpeed = abs(distancePos.y);
 			}
 
+
 			int y;
 			MonsterType type = Monster->getMonsterType();
 			if (type == MonsterType::slow)
@@ -266,6 +267,7 @@ void MonsterController::update()
 				currentPos.y -= pixelSpeed;
 				Monster->setTextureRect(sf::IntRect(0, y, 130, 130));
 			}
+
 			Monster->setPosition(currentPos);
 		}
 	}

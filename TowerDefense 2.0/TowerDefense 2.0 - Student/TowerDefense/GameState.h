@@ -10,11 +10,15 @@
 #include "Timer.h"
 #include "Tower.h"
 
-enum class MonsterType {
-	slow, regular, fast
+enum class MonsterType
+{
+	slow,
+	regular,
+	fast
 };
 
-class GameState {
+class GameState
+{
 private:
 	// This contains info about tower pricing, damage, etc
 	std::map<TowerType, std::map<string, int>> towerProps;
@@ -30,9 +34,12 @@ private:
 	int MonsterEliminated = 0;
 	int score = 0;
 
-	TowerType purchaseTower = TowerType::empty;
 	// This is used by the upgrade button
+	TowerType purchaseTower = TowerType::empty;
 	Tower* boardTower = nullptr;
+
+	//for debug rendering.
+	std::string debugText = "First wave";
 
 public:
 	GameState(Timer* timer);
@@ -45,6 +52,9 @@ public:
 
 	int getScore() { return score; }
 	void setScore(const int scoreIn) { score = scoreIn; }
+
+	const std::string& GetDebugText();
+
 	//Accessors
 	int getHealth();
 	int getTams();
@@ -53,6 +63,9 @@ public:
 	int getMonsterRemaining();
 	int getMonsterEliminated();
 	bool getHelperState();
+
+	void SetDebugText(const std::string& text);
+
 	// This is used by the GameMenuController to determine opacity,
 	// as well as determining which tower the towerController should buy
 	TowerType getPurchaseTower();
@@ -63,15 +76,14 @@ public:
 	std::map<string, int> getTowerProps(TowerType type);
 	std::map<string, int> getMonsterProps(MonsterType type);
 
-	void startGame();				// Starts game
-	void endGame();					// Ends game
-	void startWave();				// Starts wave
-	void updateHealthBy(int update);	// Update player lives
-	void updateTamBy(int update);		// Update player currency
+	void startGame(); // Starts game
+	void endGame(); // Ends game
+	void startWave(); // Starts wave
+	void updateHealthBy(int update); // Update player lives
+	void updateTamBy(int update); // Update player currency
 	void toggleHelpScreen();
 
 	void monsterEliminated() { MonsterEliminated++; }
-
 };
 
 #endif /* GAMESTATE_H_ */

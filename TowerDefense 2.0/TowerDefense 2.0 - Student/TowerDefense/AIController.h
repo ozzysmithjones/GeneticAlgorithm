@@ -18,6 +18,7 @@ struct Agent
 	std::array<TowerType, 24> towerByInterval;
 
 public:
+	Agent(int score);
 	Agent();
 };
 
@@ -38,6 +39,8 @@ public:
 	void addTower(TowerType type, int gridx, int gridy);
 	void gameOver();
 
+	inline const std::string& getDebugText() const { return debugText; }
+
 private:
 	GameController* m_gameController;
 	GameBoard* m_gameBoard;
@@ -46,12 +49,12 @@ private:
 
 	Agent* currentAgent = nullptr;
 	int currentAgentIndex;
-	std::array<Agent, 10> agents;
+	std::array<Agent*, 4> agents;
 	unsigned int currentTowerInterval;
 
 	double elapsedSeconds = 0;
 	double counter = 0;
-
+	std::string debugText = "Generation : 1\nCurrent AI Index : 0\nPrevious score :0";
 
 	void Splice(Agent* primary, const Agent* secondary, double bias);
 	void Mutate(Agent* agent, std::size_t numPositionChanges, std::size_t numTowerChanges);
