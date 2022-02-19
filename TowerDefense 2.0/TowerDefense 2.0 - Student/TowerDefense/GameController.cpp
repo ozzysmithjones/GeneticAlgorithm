@@ -37,7 +37,7 @@ const std::vector<Vector2f> path = {
 			Vector2f(17, 15), Vector2f(17, 12), Vector2f(21, 12), Vector2f(21, 18) };*/
 
 
-bool debug;
+bool debug = false;
 
 GameBoard::GameBoard(GameState* _gameState, TowerController* _towerController,
                      int _width) :
@@ -177,6 +177,23 @@ bool GameBoard::addTower(TowerType type, int gridX, int gridY)
 	}
 
 	return false;
+}
+
+
+bool GameBoard::inRangeOfPath(int x, int y, TowerType type) const
+{
+	const int range = gameState->getTowerProps(type)["range"];
+
+	float minDist = std::numeric_limits<float>::max();
+	for (const auto& p : path)
+	{
+		const float xm = (p.x - x) * (p.x - (float)x);
+		const float ym = (p.y - y) * (p.y - (float)y);
+		const float dist = (float)(powf(xm + ym, 0.5));
+		minDist = std::min(dist, minDist);
+	}
+
+	return minDist <= range;
 }
 
 // Determine if any action needs ton be taken by

@@ -10,12 +10,13 @@ class Timer;
 class GameState;
 
 
+constexpr auto STRIP_LENGTH = 24;
+
 struct Agent
 {
 	int score = 0;
-	std::array<std::array<unsigned, WIDTH * HEIGHT>, (int)TowerType::count - 1> PositionsByTower;
-	std::array<std::array<unsigned, WIDTH * HEIGHT>, (int)TowerType::count - 1> IndexOfPositionsByTower;
-	std::array<TowerType, 24> towerByInterval;
+	std::array<sf::Vector2i, STRIP_LENGTH> positionByInterval;
+	std::array<TowerType, STRIP_LENGTH> towerByInterval;
 
 public:
 	Agent(int score);
@@ -57,5 +58,6 @@ private:
 	std::string debugText = "Generation : 1\nCurrent AI Index : 0\nPrevious score :0";
 
 	void Splice(Agent* primary, const Agent* secondary, double bias);
+	void TryPlaceTower();
 	void Mutate(Agent* agent, std::size_t numPositionChanges, std::size_t numTowerChanges);
 };
