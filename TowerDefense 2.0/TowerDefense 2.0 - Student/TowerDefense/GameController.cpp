@@ -37,7 +37,7 @@ const std::vector<Vector2f> path = {
 			Vector2f(17, 15), Vector2f(17, 12), Vector2f(21, 12), Vector2f(21, 18) };*/
 
 
-bool debug;
+bool debug = false;
 
 GameBoard::GameBoard(GameState* _gameState, TowerController* _towerController,
                      int _width) :

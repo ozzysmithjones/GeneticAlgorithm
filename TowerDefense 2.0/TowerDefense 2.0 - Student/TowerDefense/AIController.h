@@ -58,5 +58,6 @@ private:
 	std::string debugText = "Generation : 1\nCurrent AI Index : 0\nPrevious score :0";
 
 	void Splice(Agent* primary, const Agent* secondary, double bias);
+	void TryPlaceTower();
 	void Mutate(Agent* agent, std::size_t numPositionChanges, std::size_t numTowerChanges);
 };

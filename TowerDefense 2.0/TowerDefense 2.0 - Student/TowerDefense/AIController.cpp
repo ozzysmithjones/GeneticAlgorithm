@@ -93,7 +93,7 @@ void AIController::gameOver()
 
 		for (std::size_t i = 1; i < agents.size(); i++)
 		{
-			Mutate(agents[i], (STRIP_LENGTH / (agents.size() + 1)) * i, 8);
+			Mutate(agents[i], (STRIP_LENGTH / agents.size()) * i, (STRIP_LENGTH / agents.size()) * i);
 		}
 	}
 
@@ -152,6 +152,42 @@ void AIController::Splice(Agent* primary, const Agent* secondary, double bias)
 	}
 }
 
+void AIController::TryPlaceTower()
+{
+	const TowerType& type = currentAgent->towerByInterval[currentTowerInterval];
+	const bool purchasable = m_gameBoard->towerIsPurchasable(type);
+
+	if (!purchasable)
+		return;
+
+	sf::Vector2i position;
+
+	bool found = false;
+	const auto initialInterval = currentTowerInterval;
+
+	do
+	{
+		position = currentAgent->positionByInterval[currentTowerInterval];
+		if (m_gameBoard->gridSpaceAvailable(position.x, position.y))
+		{
+			found = true;
+			break;
+		}
+
+		currentTowerInterval++;
+		if (currentTowerInterval >= currentAgent->towerByInterval.size())
+			currentTowerInterval = 0;
+	}
+	while (currentTowerInterval != initialInterval);
+
+	if (!found)
+	{
+		return;
+	}
+
+	m_gameBoard->addTower(type, position.x, position.y);
+}
+
 void AIController::update()
 {
 	if (m_Timer == nullptr)
@@ -168,38 +204,16 @@ void AIController::update()
 
 	counter += deltaTime;
 
+
+	TryPlaceTower();
+
+	/*
 	if (counter > 0.2)
 	{
 		counter = 0;
-		const TowerType& type = currentAgent->towerByInterval[currentTowerInterval];
-		const sf::Vector2i& position = currentAgent->positionByInterval[currentTowerInterval];
-		const bool spaceAvailable = m_gameBoard->gridSpaceAvailable(position.x, position.y);
-		const bool purchasable = m_gameBoard->towerIsPurchasable(type);
-
-		if (spaceAvailable && purchasable)
-		{
-			m_gameBoard->addTower(type, position.x, position.y);
-		}
-
-		if (!spaceAvailable || purchasable)
-		{
-			currentTowerInterval++;
-			if (currentTowerInterval >= currentAgent->towerByInterval.size())
-				currentTowerInterval = 0;
-		}
-	}
-
-	//GAManager::Instance()->Update(m_Timer->elapsedSeconds());
-
-	/*
-	// this might be useful? Monsters killed
-	static int monstersKilled = 0;
-
-	if (m_gameState->getMonsterEliminated() > monstersKilled)
-	{
-		monstersKilled = m_gameState->getMonsterEliminated();
 	}
 	*/
+
 
 	recordScore();
 }
