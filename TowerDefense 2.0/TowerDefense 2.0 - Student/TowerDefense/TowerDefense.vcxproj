@@ -133,7 +133,9 @@
     <ClInclude Include="AIController.h" />
     <ClInclude Include="Clickable.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="GeneticAlgorithm.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Tower.h" />
     <ClInclude Include="TowerAndMonsterController.h" />
     <ClInclude Include="TowerButton.h" />
@@ -151,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="Clickable.cpp" />
+    <ClCompile Include="GeneticAlgorithm.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Tower.cpp" />
     <ClCompile Include="TowerAndMonsterController.cpp" />
@@ -164,6 +167,9 @@
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="throwProjectile.cpp" />
     <ClCompile Include="Timer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TowerDefense.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

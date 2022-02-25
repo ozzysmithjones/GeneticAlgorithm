@@ -53,6 +53,7 @@ public:
 	bool towerIsPurchasable(TowerType type);
 	bool addTower(TowerType type, int gridX, int gridY);
 	bool inRangeOfPath(int x, int y, TowerType type) const;
+	int getNumTilesInRange(int x, int y, TowerType type) const;
 
 	int gridStatus[WIDTH][HEIGHT] = {0};
 

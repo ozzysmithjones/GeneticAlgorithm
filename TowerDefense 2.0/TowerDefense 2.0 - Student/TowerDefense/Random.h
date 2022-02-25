@@ -31,6 +31,9 @@ public:
 		return dist(mersenneTwister);
 	}
 
+	static std::mt19937& GetMersenne();
+
+
 private:
 	struct Constructor
 	{

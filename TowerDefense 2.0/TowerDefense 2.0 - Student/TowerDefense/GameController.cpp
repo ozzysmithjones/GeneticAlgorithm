@@ -31,6 +31,81 @@ const std::vector<Vector2f> path = {
 	Vector2f(17, 15), Vector2f(17, 12), Vector2f(21, 12), Vector2f(21, 18)
 };
 
+const std::array<sf::Vector2i, 71> pathTiles
+{
+	sf::Vector2i(870, -30),
+	sf::Vector2i(870, 30),
+	sf::Vector2i(870, 90),
+	sf::Vector2i(870, 150),
+	sf::Vector2i(870, 210),
+	sf::Vector2i(930, 210),
+	sf::Vector2i(990, 210),
+	sf::Vector2i(1050, 210),
+	sf::Vector2i(1110, 210),
+	sf::Vector2i(1170, 210),
+	sf::Vector2i(1230, 210),
+	sf::Vector2i(1290, 210),
+	sf::Vector2i(1290, 270),
+	sf::Vector2i(1290, 330),
+	sf::Vector2i(1290, 390),
+	sf::Vector2i(1290, 450),
+	sf::Vector2i(1230, 450),
+	sf::Vector2i(1170, 450),
+	sf::Vector2i(1110, 450),
+	sf::Vector2i(1050, 450),
+	sf::Vector2i(990, 450),
+	sf::Vector2i(930, 450),
+	sf::Vector2i(870, 450),
+	sf::Vector2i(810, 450),
+	sf::Vector2i(750, 450),
+	sf::Vector2i(690, 450),
+	sf::Vector2i(630, 450),
+	sf::Vector2i(570, 450),
+	sf::Vector2i(570, 390),
+	sf::Vector2i(570, 330),
+	sf::Vector2i(510, 330),
+	sf::Vector2i(450, 330),
+	sf::Vector2i(390, 330),
+	sf::Vector2i(330, 330),
+	sf::Vector2i(270, 330),
+	sf::Vector2i(210, 330),
+	sf::Vector2i(210, 390),
+	sf::Vector2i(210, 450),
+	sf::Vector2i(210, 510),
+	sf::Vector2i(210, 570),
+	sf::Vector2i(210, 630),
+	sf::Vector2i(210, 690),
+	sf::Vector2i(210, 750),
+	sf::Vector2i(270, 750),
+	sf::Vector2i(330, 750),
+	sf::Vector2i(390, 750),
+	sf::Vector2i(450, 750),
+	sf::Vector2i(510, 750),
+	sf::Vector2i(570, 750),
+	sf::Vector2i(630, 750),
+	sf::Vector2i(690, 750),
+	sf::Vector2i(690, 810),
+	sf::Vector2i(690, 870),
+	sf::Vector2i(750, 870),
+	sf::Vector2i(810, 870),
+	sf::Vector2i(870, 870),
+	sf::Vector2i(930, 870),
+	sf::Vector2i(990, 870),
+	sf::Vector2i(990, 810),
+	sf::Vector2i(990, 750),
+	sf::Vector2i(990, 690),
+	sf::Vector2i(1050, 690),
+	sf::Vector2i(1110, 690),
+	sf::Vector2i(1170, 690),
+	sf::Vector2i(1230, 690),
+	sf::Vector2i(1230, 750),
+	sf::Vector2i(1230, 810),
+	sf::Vector2i(1230, 870),
+	sf::Vector2i(1230, 930),
+	sf::Vector2i(1230, 990),
+	//sf::Vector2i(1230, 1050),
+};
+
 /*const std::vector<Vector2f> path = { Vector2f(15, 0), Vector2f(15, 2), Vector2f(
 			20, 2), Vector2f(22, 2), Vector2f(22, 8), Vector2f(10, 8), Vector2f(10,
 			6), Vector2f(4, 6), Vector2f(4, 13), Vector2f(12, 13), Vector2f(12, 15),
@@ -182,18 +257,31 @@ bool GameBoard::addTower(TowerType type, int gridX, int gridY)
 
 bool GameBoard::inRangeOfPath(int x, int y, TowerType type) const
 {
-	const int range = gameState->getTowerProps(type)["range"];
+	const float range = (float)gameState->getTowerProps(type)["range"];
+	return std::any_of(pathTiles.begin(), pathTiles.end(), [range, x, y](const sf::Vector2i& p)-> bool
+		{
+			const float diffX = (p.x) - (x * 60);
+			const float diffY = (p.y) - (y * 60);
+			const float dist = sqrt(diffX * diffX + diffY * diffY);
+			return dist < range;
+		}
+	);
+}
 
-	float minDist = std::numeric_limits<float>::max();
+int GameBoard::getNumTilesInRange(int x, int y, TowerType type) const
+{
+	const int range = gameState->getTowerProps(type)["range"];
+	int count = 0;
 	for (const auto& p : path)
 	{
 		const float xm = (p.x - x) * (p.x - (float)x);
 		const float ym = (p.y - y) * (p.y - (float)y);
 		const float dist = (float)(powf(xm + ym, 0.5));
-		minDist = std::min(dist, minDist);
+		if (dist <= range)
+			count++;
 	}
 
-	return minDist <= range;
+	return count;
 }
 
 // Determine if any action needs ton be taken by
@@ -440,7 +528,7 @@ int main()
 	aIController.setTimer(clk);
 	aIController.setGameState(gameState);
 	aIController.setupBoard();
-
+	aIController.Init();
 
 	gameMenuController->setDebug(debug);
 	// Main game loop
