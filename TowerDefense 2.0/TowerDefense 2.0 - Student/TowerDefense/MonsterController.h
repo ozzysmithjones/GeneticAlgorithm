@@ -18,7 +18,8 @@ using std::string;
 using std::weak_ptr;
 using std::shared_ptr;
 
-class MonsterController {
+class MonsterController
+{
 private:
 	sf::Texture* MonsterSprites;
 	sf::RenderWindow* window;
@@ -27,7 +28,7 @@ private:
 	sf::Vector2f MonsterBaseSize = sf::Vector2f(120, 120);
 	// This is a difficulty modifer that affects the stats
 	// of generated Monster. This is modified when waves change
-	float modifier;
+	float modifier = 1.0f;
 	std::vector<shared_ptr<Monster>>* MonsterVec;
 	const std::vector<sf::Vector2f> pathInCubits;
 	int counter;
@@ -36,11 +37,11 @@ private:
 public:
 	MonsterController() = delete;
 	MonsterController(sf::RenderWindow* window, GameState* gameState,
-			const std::vector<sf::Vector2f> pathToFollow);
+	                  const std::vector<sf::Vector2f> pathToFollow);
 	// This destroys all the Monster that it contains
 	virtual ~MonsterController();
 
-	void turnMonster(shared_ptr<Monster> Monster, sf::IntRect textureRect, int direction );
+	void turnMonster(shared_ptr<Monster> Monster, sf::IntRect textureRect, int direction);
 
 	shared_ptr<Monster> spawnMonster(sf::Vector2f position, MonsterType type);
 	void updateMonster();
@@ -63,5 +64,4 @@ public:
 	float getModifier();
 	void setModifier(float _modifier);
 	std::vector<shared_ptr<Monster>>* getMonsterVec();
-
 };

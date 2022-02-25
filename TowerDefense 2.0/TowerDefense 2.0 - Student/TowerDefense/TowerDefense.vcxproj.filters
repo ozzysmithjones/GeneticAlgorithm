@@ -46,6 +46,9 @@
     <ClCompile Include="Random.cpp">
       <Filter>AI Code</Filter>
     </ClCompile>
+    <ClCompile Include="GeneticAlgorithm.cpp">
+      <Filter>AI Code</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clickable.h">
@@ -99,6 +102,10 @@
     <ClInclude Include="Random.h">
       <Filter>AI Code</Filter>
     </ClInclude>
+    <ClInclude Include="GeneticAlgorithm.h">
+      <Filter>AI Code</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game Headers">
@@ -110,5 +117,8 @@
     <Filter Include="AI Code">
       <UniqueIdentifier>{09d177bd-c1df-4e4e-857f-fb10307d7636}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TowerDefense.rc" />
   </ItemGroup>
 </Project>

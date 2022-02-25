@@ -18,3 +18,9 @@ Random::Constructor::Constructor()
 
 	mersenneTwister.seed(q);
 }
+
+
+std::mt19937& Random::GetMersenne()
+{
+	return Random::mersenneTwister;
+}

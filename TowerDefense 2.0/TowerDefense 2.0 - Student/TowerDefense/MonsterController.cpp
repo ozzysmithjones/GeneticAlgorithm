@@ -21,10 +21,8 @@ MonsterController::MonsterController(sf::RenderWindow* _window,
 	window(_window), gameState(_gameState), pathInCubits(_path)
 {
 	MonsterVec = new std::vector<shared_ptr<Monster>>;
-	modifier = 1;
 	counter = 90;
 	wave = 1;
-
 
 	MonsterSprites = new sf::Texture;
 	if (!MonsterSprites->loadFromFile("assets/MonsterSprite.png"))
@@ -273,6 +271,7 @@ void MonsterController::update()
 	}
 	updateMonster();
 	counter++;
+	gameState->SetWaveCounter(counter);
 }
 
 /*

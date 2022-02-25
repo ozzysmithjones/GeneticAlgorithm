@@ -90,6 +90,7 @@ void GameState::updateHealthBy(int update)
 void GameState::updateTamBy(int update)
 {
 	this->tams += update;
+	this->tamsPayed += max(0, update * -1);
 	dirtyBit = true;
 }
 
@@ -144,4 +145,19 @@ void GameState::toggleHelpScreen()
 
 GameState::~GameState()
 {
+}
+
+int GameState::GetTamsPayed() const
+{
+	return tamsPayed;
+}
+
+int GameState::GetWaveCounter() const
+{
+	return waveCounter;
+}
+
+void GameState::SetWaveCounter(int waveTimer)
+{
+	this->waveCounter = waveTimer;
 }

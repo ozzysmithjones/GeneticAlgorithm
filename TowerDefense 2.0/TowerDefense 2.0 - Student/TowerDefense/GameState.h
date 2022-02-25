@@ -31,8 +31,10 @@ private:
 	int tams = 100;
 	int currentWave = 1;
 	int MonsterRemaining = -1;
-	int MonsterEliminated = 0;
 	int score = 0;
+	int MonsterEliminated = 0;
+	int tamsPayed = 0; // total number of drams payed, could be good as a negative fitness.
+	int waveCounter = 0; // each time it reaches 900, a new wave starts (good to see how close to the next wave we are)
 
 	// This is used by the upgrade button
 	TowerType purchaseTower = TowerType::empty;
@@ -44,11 +46,13 @@ private:
 public:
 	GameState(Timer* timer);
 	virtual ~GameState();
+
 	// This is the pixel length of a cubit
 	const int cubit = 60;
 	bool dirtyBit = true;
 	Timer* timer;
 	sf::Vector2i mousePos;
+
 
 	int getScore() { return score; }
 	void setScore(const int scoreIn) { score = scoreIn; }
@@ -58,8 +62,12 @@ public:
 	//Accessors
 	int getHealth();
 	int getTams();
+	int GetTamsPayed() const;
+
 	int getCurrentWave();
 	void setCurrentWave(int wave);
+	int GetWaveCounter() const;
+	void SetWaveCounter(int waveTimer);
 	int getMonsterRemaining();
 	int getMonsterEliminated();
 	bool getHelperState();
