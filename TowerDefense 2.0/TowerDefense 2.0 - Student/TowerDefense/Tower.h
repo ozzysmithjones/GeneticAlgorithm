@@ -8,18 +8,10 @@
 #include <vector>
 
 #include "Clickable.h"
+#include "Constants.h"
 
 using namespace std;
 typedef sf::IntRect* srcArrayPtr;
-
-enum class TowerType
-{
-	empty,
-	slammer,
-	swinger,
-	thrower,
-	count
-};
 
 class Tower : public Clickable
 {

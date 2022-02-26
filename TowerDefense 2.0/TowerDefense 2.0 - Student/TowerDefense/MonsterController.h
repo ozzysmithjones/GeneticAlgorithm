@@ -9,7 +9,6 @@
 
 #include "Monster.h"
 #include "GameState.h"
-#include "GameController.h"
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>

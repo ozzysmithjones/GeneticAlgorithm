@@ -4,7 +4,7 @@
     <ClCompile Include="Clickable.cpp">
       <Filter>Game Source</Filter>
     </ClCompile>
-    <ClCompile Include="GameController.cpp">
+    <ClCompile Include="GameBoard.cpp">
       <Filter>Game Source</Filter>
     </ClCompile>
     <ClCompile Include="GameMenuController.cpp">
@@ -49,12 +49,14 @@
     <ClCompile Include="GeneticAlgorithm.cpp">
       <Filter>AI Code</Filter>
     </ClCompile>
+    <ClCompile Include="TowerDefence.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clickable.h">
       <Filter>Game Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GameController.h">
+    <ClInclude Include="GameBoard.h">
       <Filter>Game Headers</Filter>
     </ClInclude>
     <ClInclude Include="GameMenuController.h">
@@ -106,6 +108,10 @@
       <Filter>AI Code</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ITowerDefence.h">
+      <Filter>AI Code</Filter>
+    </ClInclude>
+    <ClInclude Include="TowerDefence.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game Headers">

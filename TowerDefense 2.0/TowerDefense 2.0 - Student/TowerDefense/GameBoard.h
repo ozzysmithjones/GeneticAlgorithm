@@ -5,24 +5,12 @@
  *      Author: Connor
  */
 #pragma once
+#include <vector>
+#include <array>
 #include "Constants.h"
-#include "GameState.h"
-#include "Tower.h"
-#include "TowerController.h"
 
-
-// Game Controller keeps all Game State Variables Running and Updated
-class GameController
-{
-private:
-public:
-	GameController();
-
-	void process();
-	void update();
-	void render();
-};
-
+class GameState;
+class TowerController;
 
 // Game Board generates the map, and handles interactions
 // for any entities sitting on the map
@@ -33,17 +21,13 @@ private:
 	TowerController* towerController;
 	int width;
 
-	// Helper functions
-
-
 public:
 	GameBoard(GameState* gameState, TowerController* towerController,
-	          int widthInPixels);
+	          int widthInPixels, const std::vector<sf::Vector2f>& path, const std::array<sf::Vector2i, 71>& pathTiles);
 	~GameBoard();
 
 	bool validatePos(int mouseX, int mouseY, int range);
 	void process(sf::Event event, sf::Vector2i mousePos);
-	void update();
 	void render(sf::RenderWindow* window); // Render board
 	void renderLabels(sf::RenderWindow* window);
 	void renderRange(int mouseX, int mouseY, int range, sf::RenderWindow* window);
@@ -56,6 +40,9 @@ public:
 	int getNumTilesInRange(int x, int y, TowerType type) const;
 
 	int gridStatus[WIDTH][HEIGHT] = {0};
+
+	const std::vector<sf::Vector2f>& path;
+	const std::array<sf::Vector2i, 71>& pathTiles;
 
 	sf::Texture* _helpTexture;
 	sf::Texture* _menuTexture;

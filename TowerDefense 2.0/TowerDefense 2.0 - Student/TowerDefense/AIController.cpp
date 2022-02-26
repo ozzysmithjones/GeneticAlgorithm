@@ -5,7 +5,7 @@
 #include <iostream>
 #include <Windows.h>
 
-#include "GameController.h"
+
 #include "Random.h"
 
 using namespace std;
@@ -20,11 +20,6 @@ AIController::AIController()
 	}
 
 	currentAgent = agents[0];
-
-	m_gameController = nullptr;
-	m_gameBoard = nullptr;
-	m_Timer = nullptr;
-	m_gameState = nullptr;
 }
 
 AIController::~AIController()
@@ -37,7 +32,6 @@ AIController::~AIController()
 
 void AIController::gameOver()
 {
-	currentAgent->lastTowerIndex = currentTowerIndex;
 	currentAgent->fitness = CalculateFitness(currentAgent);
 	currentAgentIndex++;
 
@@ -72,7 +66,7 @@ void AIController::InitPositionsInRangeByTower()
 		{
 			for (std::size_t x = 0; x < WIDTH; x++)
 			{
-				bitboardByTower[i][y * WIDTH + x] = m_gameBoard->inRangeOfPath(x, y, (TowerType)i);
+				bitboardByTower[i][y * WIDTH + x] = towerDefence->IsTowerInRangeOfPath(x, y, (TowerType)i);
 			}
 		}
 	}
@@ -245,9 +239,7 @@ slammer, swinger, thrower, count,
 
 std::size_t AIController::CalculateFitness(Agent* agent)
 {
-	std::size_t result = m_gameState->getScore();
-	result += (int32_t)(10 * ((float)m_gameState->GetWaveCounter() / 900.0f));
-	return result;
+	return towerDefence->GetScore();
 }
 
 void AIController::CrossOver(AgentArray& agents)
@@ -623,7 +615,7 @@ void AIController::MutateTower(Chromosome& chromosome, const std::size_t iterati
 		chromosome.towers[roll] = (TowerType)tower;
 
 		//if the tower is no longer in range of the path
-		if (!m_gameBoard->inRangeOfPath(chromosome.positions[roll].x, chromosome.positions[roll].y, (TowerType)tower))
+		if (!towerDefence->IsTowerInRangeOfPath(chromosome.positions[roll].x, chromosome.positions[roll].y, (TowerType)tower))
 		{
 			//set it to a position in range of the path.
 			const std::size_t posRoll = Random::UniformInt(0u, positionsInRangeByTower[tower].size() - 1);
@@ -643,11 +635,13 @@ std::array<std::string, (std::size_t)TowerType::count> towerTypeStrings
 };
 */
 
+const Chromosome& AIController::GetCurrentChromosome()
+{
+	return agents[currentAgentIndex]->chromosome;
+}
+
 void AIController::update()
 {
-	if (m_Timer == nullptr)
-		return;
-
 	//Calculation of delta time for timing.
 	//const double seconds = floor(m_Timer->elapsedSeconds());
 	//const double deltaTime = seconds - elapsedSeconds;
@@ -678,17 +672,17 @@ void AIController::update()
 	}
 	
 
-	if (m_gameBoard->towerIsPurchasable(type))
+	if (towerDefence->IsMoneyForTower(type))
 	{
 		addTower(type, pos.x, pos.y);
 	}
 
-	recordScore();
+	//recordScore();
 }
 
 void AIController::addTower(TowerType type, int32_t gridx, int32_t gridy)
 {
-	m_gameBoard->addTower(type, gridx, gridy);
+	towerDefence->PlaceTower(gridx, gridy, type);
 
 	//Increment to the next tower by default.
 	const std::size_t prev = currentTowerIndex;
@@ -698,7 +692,7 @@ void AIController::addTower(TowerType type, int32_t gridx, int32_t gridy)
 
 	//Find the next tower with available space (if the default isn't already)
 	sf::Vector2i pos = currentAgent->chromosome.positions[currentTowerIndex];
-	while (currentTowerIndex != prev && !m_gameBoard->gridSpaceAvailable(pos.x, pos.y))
+	while (currentTowerIndex != prev && !towerDefence->IsSpaceForTower(pos.x, pos.y))
 	{
 		currentTowerIndex++;
 		if (currentTowerIndex >= NUM_GENES)
@@ -714,11 +708,9 @@ void AIController::Init()
 	Initialisation(agents);
 }
 
-void AIController::setupBoard()
-{
-	m_Timer->start();
-}
 
+/*
+* MOVED TO Tower Defence class.
 int32_t AIController::recordScore()
 {
 	int32_t currentWave = m_gameState->getCurrentWave();
@@ -738,3 +730,4 @@ int32_t AIController::recordScore()
 
 	return score;
 }
+*/

@@ -134,6 +134,7 @@
     <ClInclude Include="Clickable.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="GeneticAlgorithm.h" />
+    <ClInclude Include="ITowerDefence.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Tower.h" />
@@ -142,18 +143,20 @@
     <ClInclude Include="TowerController.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterController.h" />
-    <ClInclude Include="GameController.h" />
+    <ClInclude Include="GameBoard.h" />
     <ClInclude Include="GameMenuController.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="MenuButton.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="throwProjectile.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="TowerDefence.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIController.cpp" />
     <ClCompile Include="Clickable.cpp" />
     <ClCompile Include="GeneticAlgorithm.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Tower.cpp" />
     <ClCompile Include="TowerAndMonsterController.cpp" />
@@ -161,12 +164,13 @@
     <ClCompile Include="TowerController.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterController.cpp" />
-    <ClCompile Include="GameController.cpp" />
+    <ClCompile Include="GameBoard.cpp" />
     <ClCompile Include="GameMenuController.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="throwProjectile.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TowerDefence.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TowerDefense.rc" />

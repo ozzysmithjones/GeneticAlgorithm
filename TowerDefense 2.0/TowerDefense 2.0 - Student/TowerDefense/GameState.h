@@ -9,13 +9,7 @@
 #define GAMESTATE_H_
 #include "Timer.h"
 #include "Tower.h"
-
-enum class MonsterType
-{
-	slow,
-	regular,
-	fast
-};
+#include "Constants.h"
 
 class GameState
 {
