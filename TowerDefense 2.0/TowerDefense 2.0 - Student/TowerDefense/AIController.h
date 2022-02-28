@@ -70,9 +70,6 @@ public:
 	~AIController();
 
 	void Init();
-
-	int32_t GetGeneration() const;
-	int32_t GetHighestScore() const;
 	const Chromosome& GetCurrentChromosome();
 	void SetTowerDefence(ITowerDefence* _towerDefence) { towerDefence = _towerDefence; };
 	void update();
@@ -84,7 +81,6 @@ public:
 
 private:
 
-	int32_t recordScore();
 
 	void InitPositionsInRangeByTower();
 	//Functions that must be implemented according to the mark scheme:
