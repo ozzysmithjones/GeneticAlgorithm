@@ -1,20 +1,36 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TowerDefense", "TowerDefense\TowerDefense.vcxproj", "{12806C38-A948-42B4-B00F-9EA3463BB950}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FasterTowerDefence", "FasterTowerDefence\FasterTowerDefence.vcxproj", "{057C2F56-8E51-4CE2-9D7E-3816E24FC244}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12806C38-A948-42B4-B00F-9EA3463BB950}.Debug|x64.ActiveCfg = Debug|x64
+		{12806C38-A948-42B4-B00F-9EA3463BB950}.Debug|x64.Build.0 = Debug|x64
 		{12806C38-A948-42B4-B00F-9EA3463BB950}.Debug|x86.ActiveCfg = Debug|Win32
 		{12806C38-A948-42B4-B00F-9EA3463BB950}.Debug|x86.Build.0 = Debug|Win32
+		{12806C38-A948-42B4-B00F-9EA3463BB950}.Release|x64.ActiveCfg = Release|x64
+		{12806C38-A948-42B4-B00F-9EA3463BB950}.Release|x64.Build.0 = Release|x64
 		{12806C38-A948-42B4-B00F-9EA3463BB950}.Release|x86.ActiveCfg = Release|Win32
 		{12806C38-A948-42B4-B00F-9EA3463BB950}.Release|x86.Build.0 = Release|Win32
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Debug|x64.ActiveCfg = Debug|x64
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Debug|x64.Build.0 = Debug|x64
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Debug|x86.ActiveCfg = Debug|Win32
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Debug|x86.Build.0 = Debug|Win32
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Release|x64.ActiveCfg = Release|x64
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Release|x64.Build.0 = Release|x64
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Release|x86.ActiveCfg = Release|Win32
+		{057C2F56-8E51-4CE2-9D7E-3816E24FC244}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

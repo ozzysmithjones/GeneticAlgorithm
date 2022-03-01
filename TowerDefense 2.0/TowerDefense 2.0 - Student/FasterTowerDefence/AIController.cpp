@@ -1,142 +1,12 @@
 #include "AIController.h"
-#include "Timer.h"
-#include "GameState.h"
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include <fstream>
-#include <Windows.h>
-
-#include "json.hpp"
 #include "Random.h"
+#include "json.hpp"
 
 using namespace std;
-
-
-/*
-	chrom.positions =
-	{
-		sf::Vector2i(10, 6),
-		sf::Vector2i(6, 5),
-		sf::Vector2i(13, 2),
-		sf::Vector2i(17, 10),
-		sf::Vector2i(11, 9),
-		sf::Vector2i(10, 8),
-		sf::Vector2i(3, 10),
-		sf::Vector2i(20, 6),
-		sf::Vector2i(13, 11),
-		sf::Vector2i(6, 14),
-		sf::Vector2i(13, 4),
-		sf::Vector2i(13, 9),
-		sf::Vector2i(11, 6),
-		sf::Vector2i(2, 6),
-		sf::Vector2i(10, 9),
-	};
-
-
-
-	chrom.towers =
-	{
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::swinger,
-		TowerType::swinger,
-		TowerType::thrower,
-	};
-	*/
-
-
-	//39 generations:
-	/*
-	chrom.positions =
-	{
-		sf::Vector2i(13, 1),
-		sf::Vector2i(16, 2),
-		sf::Vector2i(8, 10),
-		sf::Vector2i(17, 9),
-		sf::Vector2i(19, 5),
-		sf::Vector2i(11, 9),
-		sf::Vector2i(16, 6),
-		sf::Vector2i(15, 12),
-		sf::Vector2i(19, 0),
-		sf::Vector2i(8, 5),
-		sf::Vector2i(14, 9),
-		sf::Vector2i(19, 10),
-		sf::Vector2i(20, 8),
-		sf::Vector2i(19, 14),
-		sf::Vector2i(25, 11),
-	};
-
-	chrom.towers =
-	{
-		TowerType::swinger,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::swinger,
-		TowerType::swinger,
-		TowerType::thrower,
-		TowerType::thrower,
-	};
-	*/
-
-	//105 generations:
-/*
-chrom.positions =
-{
-	sf::Vector2i(3, 5),
-	sf::Vector2i(13, 0),
-	sf::Vector2i(15, 11),
-	sf::Vector2i(11, 3),
-	sf::Vector2i(13, 11),
-	sf::Vector2i(9, 11),
-	sf::Vector2i(11, 6),
-	sf::Vector2i(21, 7),
-	sf::Vector2i(16, 6),
-	sf::Vector2i(17, 14),
-	sf::Vector2i(16, 16),
-	sf::Vector2i(7, 13),
-	sf::Vector2i(18, 10),
-	sf::Vector2i(19, 16),
-	sf::Vector2i(23, 6),
-};
-
-chrom.towers =
-{
-	TowerType::swinger,
-	TowerType::swinger,
-	TowerType::thrower,
-	TowerType::thrower,
-	TowerType::thrower,
-	TowerType::thrower,
-	TowerType::swinger,
-	TowerType::swinger,
-	TowerType::thrower,
-	TowerType::swinger,
-	TowerType::swinger,
-	TowerType::swinger,
-	TowerType::swinger,
-	TowerType::swinger,
-	TowerType::swinger,
-};
-*/
-
 
 
 ///.-----------------------------------------------------------------\.
@@ -159,8 +29,8 @@ AIController::AIController()
 	currentAgent = agents[0];
 
 	//Init strategies:
-	mutationStrategy = &AIController::IncrementalMutation;
-	crossOverStrategy = &AIController::UniformCrossOver;
+	mutationStrategy = &AIController::StandardMutation;
+	crossOverStrategy = &AIController::NPointCrossOver;
 	selectionStrategy = &AIController::ApportionSelection;
 }
 
@@ -193,7 +63,7 @@ void AIController::gameOver()
 		std::sort(agents.begin(), agents.end(), [](const Agent* a, const Agent* b)-> bool { return a->fitness > b->fitness; });
 
 		//current generation is now previous generation. (with some elitism to maintain the best across generations)
-		constexpr auto elitism = 3;
+		constexpr auto elitism = 10;
 
 		for (std::size_t i = 0; i < agents.size(); i++)
 		{
@@ -201,7 +71,7 @@ void AIController::gameOver()
 			{
 				*previousGeneration[i] = *agents[i];
 			}
-			else
+			else 
 			{
 				*agents[i] = *previousGeneration[i];
 			}
@@ -241,7 +111,7 @@ void AIController::OutputFitnessToFile(const std::string& fileName)
 	{
 		for (const auto& fitness : fitnessByGeneration)
 		{
-			file << fitness << ", ";
+			file << fitness << ",\n";
 		}
 
 		file.close();
@@ -290,7 +160,7 @@ void AIController::InputChromosomeFromFile(const std::string& fileName)
 		//towers:
 		for (std::size_t i = 0; i < j[0].size(); i++)
 		{
-			chrom.towers[i] = (TowerType)(j[0][i].get<int>() + 1);
+			chrom.towers[i] = (TowerType)(j[0][i].get<int>());
 		}
 
 		//positions:
@@ -369,7 +239,7 @@ void AIController::Mutate(AgentArray& agents)
 	for (std::size_t i = 0; i < agents.size(); i++)
 	{
 		Mutate(agents[i], i);
-}
+	}
 }
 
 void AIController::ApportCrossOver(AgentArray& agents)
@@ -477,12 +347,12 @@ void AIController::RouletteSort(AgentArray& agents)
 			{
 				break;
 			}
-}
+		}
 
 		fitnessSoFar += agents[k]->fitness;
 		std::swap(agents[i], agents[k]);
 	}
-	}
+}
 
 void AIController::TournamentSort(AgentArray& agents)
 {
@@ -715,7 +585,7 @@ void AIController::OnePointCrossOver(const double weight, const Chromosome& pare
 void AIController::InterleaveCrossOver(const Chromosome& parent1, const Chromosome& parent2, Chromosome& child1, Chromosome& child2)
 {
 	uint32_t sectionLength = Random::UniformInt(2u, 4u);
-	bool isA = (bool)Random::UniformInt(0u, 1u);
+	bool isA = (bool)Random::UniformInt(0u,1u);
 
 	for (std::size_t i = 0; i < NUM_GENES; i++)
 	{
@@ -804,7 +674,7 @@ void AIController::StandardMutation(AgentArray& agents)
 {
 	for (auto& agent : agents)
 	{
-		MutateScramble(agent->chromosome, Random::UniformInt(0u, NUM_GENES - 1) / 3);
+		MutateScramble(agent->chromosome, Random::UniformInt(0u, NUM_GENES-1) / 3);
 		MutateTower(agent->chromosome, Random::UniformInt(0u, NUM_GENES - 1) / 3);
 		MutatePosition(agent->chromosome, Random::UniformInt(0u, NUM_GENES - 1) / 3);
 	}
@@ -817,7 +687,7 @@ void AIController::IncrementalMutation(AgentArray& agents)
 {
 	for (std::size_t i = 0; i < agents.size(); i++)
 	{
-		const std::size_t amount = std::max((std::size_t)((double(i) / agents.size()) * NUM_GENES), 2u);
+		const std::size_t amount = std::max((std::size_t)((double(i) / agents.size()) * NUM_GENES),2u);
 		//MutateScramble(agents[i]->chromosome, amount);
 		MutateTower(agents[i]->chromosome, amount);
 		MutatePosition(agents[i]->chromosome, amount);
@@ -905,7 +775,7 @@ void AIController::addTower(TowerType type, int32_t gridx, int32_t gridy)
 		currentTowerIndex = 0;
 
 	//Find the next tower with available space (if the default isn't already)
-	sf::Vector2i pos = currentAgent->chromosome.positions[currentTowerIndex];
+	Vector2 pos = currentAgent->chromosome.positions[currentTowerIndex];
 	while (currentTowerIndex != prev && !towerDefence->IsSpaceForTower(pos.x, pos.y))
 	{
 		currentTowerIndex++;
@@ -937,12 +807,10 @@ Chromosome AIController::GetCurrentChromosome()
 	return agents[currentAgentIndex]->chromosome;
 }
 
-
-
-/*
-* MOVED TO Tower Defence class.
 int32_t AIController::recordScore()
 {
+	/* MOVED to tower defence/game  class
+	* 
 	int32_t currentWave = m_gameState->getCurrentWave();
 	const int32_t killCount = m_gameState->getMonsterEliminated();
 	currentWave *= 10; // living longer is good
@@ -959,5 +827,7 @@ int32_t AIController::recordScore()
 	m_gameState->setScore(score);
 
 	return score;
+	*/
+
+	return 0;
 }
-*/

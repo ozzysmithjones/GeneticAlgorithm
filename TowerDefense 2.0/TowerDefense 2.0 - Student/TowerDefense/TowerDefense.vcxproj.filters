@@ -112,6 +112,7 @@
       <Filter>AI Code</Filter>
     </ClInclude>
     <ClInclude Include="TowerDefence.h" />
+    <ClInclude Include="json.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game Headers">
