@@ -219,6 +219,7 @@ int Game::GetScore() const
 void Game::Start()
 {
 	//reset the game state.
+
 	health = 50;
 	money = 100;
 	waveCounter = 0;
@@ -328,7 +329,7 @@ bool Game::Update()
 		{
 			monster.pathIndex++;
 
-			if (monster.pathIndex == pathCoords.size()) // reach end of path
+			if (monster.pathIndex == pathWaypoints.size()) // reach end of path
 			{
 				health -= monster.damage;
 				monsters.erase(monsters.begin() + i);
