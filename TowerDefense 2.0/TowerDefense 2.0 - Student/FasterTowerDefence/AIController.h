@@ -1,10 +1,10 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include <stdint.h>
 #include <array>
 #include <bitset>
 #include <vector>
 #include "Constants.h"
+#include "Vector2.h"
 #include "ITowerDefence.h"
 
 ///.-----------------------------------------------------------------\.
@@ -12,11 +12,11 @@
 //\.-----------------------------------------------------------------./
 
 constexpr std::size_t NUM_GENES = 15u;
-constexpr std::size_t NUM_AGENTS = 10u;
+constexpr std::size_t NUM_AGENTS = 20u;
 
 struct Chromosome
 {
-	std::array<sf::Vector2i, NUM_GENES> positions;
+	std::array<Vector2, NUM_GENES> positions;
 	std::array<TowerType, NUM_GENES> towers;
 };
 
@@ -30,7 +30,6 @@ struct Agent
 };
 
 using AgentArray = std::array<Agent*, NUM_AGENTS>;
-
 
 
 ///.-----------------------------------------------------------------\.
@@ -56,8 +55,8 @@ public:
 
 	int32_t GetGeneration() const;
 	int32_t GetHighestScore() const;
-	Chromosome GetCurrentChromosome();
-	void SetTowerDefence(ITowerDefence* _towerDefence) { towerDefence = _towerDefence; };
+	Chromosome GetCurrentChromosome(); 
+	void SetTowerDefence(ITowerDefence* _towerDefence) {towerDefence = _towerDefence;};
 	void update();
 	void gameOver();
 
@@ -136,7 +135,7 @@ private:
 	ITowerDefence* towerDefence;
 
 	//for mutation (avoid placing towers out of range)
-	std::array<std::vector<sf::Vector2i>, (std::size_t)TowerType::count> positionsInRangeByTower;
+	std::array<std::vector<Vector2>, (std::size_t)TowerType::count> positionsInRangeByTower;
 
 	//Strategies 
 	SelectionStrategy selectionStrategy;
@@ -160,4 +159,5 @@ private:
 	std::string debugText = "Generation : 1\nCurrent AI Index : 0\nPrevious score :0";
 	std::vector<int> fitnessByGeneration;
 };
+
 

@@ -121,6 +121,7 @@ void TowerDefence::Run()
 	aiController = new AIController();
 	aiController->SetTowerDefence(this);
     aiController->Init();
+	aiController->InputChromosomeFromFile("chromosome.json");
     gameMenuController->setDebug(debug);
 
 	clk->start();
